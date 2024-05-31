@@ -13,7 +13,7 @@ exports.removeProduct = async (req, res) => {
             return res.status(401).send({ message: "Unauthorized access."});
         }
 
-        if (!(loginUser?.role === "Admin" )) {
+        if (!(loginUser?.role === "Admin" || loginUser?.role === "Vendor")) {
             return res.status(403).send({ status: 0, message: "Unauthorized access."});
         }
 

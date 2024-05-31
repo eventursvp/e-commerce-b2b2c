@@ -7,6 +7,9 @@ const otpGenerator = require('otp-generator');
 const UserOtp = require('model-hook/Model/userOtpModel')
 const { createApplicationLog } = require("model-hook/common_function/createLog")
 
+const Vendor = require("model-hook/Model/vendorModel");
+
+
 const opts = {
     points: 5, // 5 points
     duration: 30 * 60, // Per 30 minutes
@@ -66,4 +69,59 @@ exports.loginUser = async (req, res, next) => {
 exports.generateOtp = () => {
     const otp = parseInt(otpGenerator.generate(4, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false }));
     return otp;
+}
+
+
+exports.loginVendor = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+        const vendor = await Vendor.findOne({ email: email.toLowerCase(),role:"Vendor" });
+
+        if (!vendor) {
+            return res.status(404).send({ status: 0, message: "Vendor not found. Please register first." })
+        }
+        if (!vendor?.emailVerified) {
+            return res.status(400).send({ status: 0, message: "Please verify your email first." })
+        }
+        const rateLimiterKey = `${req.ip}_${email}`;
+        try {
+            await rateLimiter.consume(rateLimiterKey);
+        } catch (rateLimitError) {
+            const retryAfterSeconds = Math.ceil(rateLimitError.msBeforeNext / 1000);
+            const minutes = retryAfterSeconds / 60;
+            return res.status(429).send({
+                status: 0,
+                message: `Too many requests, please try again after ${Math.ceil(minutes)} minute.`,
+            });
+        }
+        const isMatch = await bcrypt.compare(password, vendor.password);
+
+        if (!isMatch) {
+            return res.status(400).send({ status: 0, message: "Email / Password is invalid" })
+        }
+        if (vendor.is2FAEnabled) {
+            const otp = this.generateOtp();
+
+            // const otp = "0000"
+            const alreadyExist = await UserOtp.findOne({ userId: vendor?._id, phoneNo: vendor.mobile })
+
+            if (alreadyExist) {
+                await UserOtp.findByIdAndUpdate({ _id: mongoose.Types.ObjectId(alreadyExist._id) }, { $set: { otp: otp, expirationTime: Date.now() + 30000 } }, { new: true })
+            } else {
+                await UserOtp.create({ userId: vendor._id, phoneNo: vendor.phoneNo, otp: otp, expirationTime: Date.now() + 30000 })
+            }
+            await createApplicationLog("Auth", "otp send", {}, {}, alreadyExist._id)
+            return res.status(201).send({ status: 1, message: "Otp send to your phone, Please verify.", otp })
+
+        }
+        const token = jwt.sign({ id: vendor._id, email: vendor.email, role: vendor.role }, process.env.JWT_TOKEN, { expiresIn: "1d" });
+        vendor.isLoggedOut = false
+        vendor.save()
+        await createApplicationLog("Auth", "vendor login", {}, {}, vendor._id)
+        return res.status(200).send({ status: 1, message: "Login successfully done", data: vendor, token: token })
+
+    } catch (error) {
+        console.log('error =>', error);
+        return res.status(500).send({ status: 0, message: "Something went wrong", error })
+    }
 }

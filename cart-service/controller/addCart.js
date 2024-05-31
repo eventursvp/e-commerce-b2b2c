@@ -1,27 +1,30 @@
 const Cart = require("model-hook/Model/cartModel");
 const User = require("model-hook/Model/userModel");
+const Vendor = require("model-hook/Model/vendorModel");
 const Product = require("model-hook/Model/productModel");
 
 const mongoose = require("mongoose");
 
 exports.addToCart = async (req, res) => {
     try {
-        const { addedBy, productId, variantId } = req.body;
+        const { addedBy, productId, variantId,vendorId } = req.body;
 
-        const { loginUser } = req;
-        if (loginUser._id != addedBy) {
-            return res.status(401).send({ message: "Unauthorized access."});
-        }
+        // const { loginUser } = req;
+        // if (loginUser._id != addedBy) {
+        //     return res.status(401).send({ message: "Unauthorized access."});
+        // }
 
-        if (!(loginUser?.role === "User" )) {
-            return res.status(403).send({ status: 0, message: "Unauthorized access."});
-        }
+        // if (!(loginUser?.role === "User" )) {
+        //     return res.status(403).send({ status: 0, message: "Unauthorized access."});
+        // }
 
         if (
             !(
                 mongoose.Types.ObjectId.isValid(productId) &&
                 mongoose.Types.ObjectId.isValid(addedBy) &&
-                mongoose.Types.ObjectId.isValid(variantId)
+                mongoose.Types.ObjectId.isValid(variantId) &&
+                mongoose.Types.ObjectId.isValid(vendorId)
+
             )
         ) {
             return res.status(403).send({
@@ -31,7 +34,7 @@ exports.addToCart = async (req, res) => {
             });
         }
 
-        if (!(addedBy && productId && variantId)) {
+        if (!(addedBy && productId && variantId && vendorId)) {
             return res.status(403).send({
                 status: 0,
                 message: "All fields are required",
@@ -43,6 +46,7 @@ exports.addToCart = async (req, res) => {
             addedBy: addedBy,
             productId: productId,
             variantId: variantId,
+            vendorId:vendorId
         });
 
         if (alreadyExist) {
@@ -51,6 +55,7 @@ exports.addToCart = async (req, res) => {
                     addedBy: addedBy,
                     productId: productId,
                     variantId: variantId,
+                    vendorId:vendorId
                 },
                 { $inc: { quantity: +1 } },
                 { new: true }
@@ -68,6 +73,23 @@ exports.addToCart = async (req, res) => {
             return res.status(404).send({
                 status: 0,
                 message: "Record not found",
+                data: [],
+            });
+        }
+
+        const vendorData = await Vendor.findOne({
+            _id:productData.addedBy,
+            isBlocked:false,
+            isReject:false,
+            isDeleted:false,
+            phoneVerified:true,
+            emailVerified:true
+        });
+
+        if (!vendorData) {
+            return res.status(404).send({
+                status: 0,
+                message: "Vendor not found",
                 data: [],
             });
         }

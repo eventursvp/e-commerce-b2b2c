@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../Model/userModel');
+const Vendor = require("../Model/vendorModel");
 
 exports.jwtValidation = async (req, res, next) => {
     try {
@@ -17,6 +18,9 @@ exports.jwtValidation = async (req, res, next) => {
                 }
                 else {
                     let findUser = await User.findOne({ email: decoded.email.toLowerCase() });
+
+                    let findVendor = await Vendor.findOne({ email: decoded.email.toLowerCase() });
+
                     if (findUser) {
                         if (findUser.role !== "Admin") {
                             if (findUser.isLoggedOut === true) {
@@ -26,6 +30,16 @@ exports.jwtValidation = async (req, res, next) => {
                             }
                         }
                         req.loginUser = findUser;
+                        next();
+                    } else if(findVendor){
+                        if (findVendor.role !== "Admin") {
+                            if (findVendor.isLoggedOut === true) {
+                                return res.status(401).send({ status: 0, message: "Please Login Again" })
+                            } else if (findVendor.emailVerified === false) {
+                                return res.status(401).send({ status: 0, message: "Please verify your email" })
+                            }
+                        }
+                        req.loginUser = findVendor;
                         next();
                     } else {
                         return res.status(401).send({ status: 0, message: "Unauthorized access." })

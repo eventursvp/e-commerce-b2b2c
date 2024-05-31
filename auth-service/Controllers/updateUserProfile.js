@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const User = require('model-hook/Model/userModel')
+const Vendor = require("model-hook/Model/vendorModel");
 const { constants } = require("model-hook/common_function/constants")
 const { createApplicationLog } = require("model-hook/common_function/createLog")
 
@@ -62,3 +63,4 @@ exports.updateUserProfile = async (req, res, next) => {
         return res.status(500).send({ status: 0, message: "Something went wrong", error });
     }
 }
+

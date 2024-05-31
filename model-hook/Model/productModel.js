@@ -146,7 +146,7 @@ const Product = new Schema(
         language:{type:String},
 
         isDeleted: { type: Boolean, default: false },
-        addedBy: { type: Schema.ObjectId, ref: "Admin" },
+        addedBy: { type: Schema.ObjectId },
         packer: { type: String },
 
     },

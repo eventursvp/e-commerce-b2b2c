@@ -412,10 +412,13 @@ exports.getAdminOrders = async(req,res)=>{
             {
                 $unwind: { path: "$productData", preserveNullAndEmptyArrays: true },
             },
+            // {
+            //     $match:{"productData.addedBy":new mongoose.Types.ObjectId(addedBy)}
+            // },
             {
                 $lookup: {
-                    from: "users",
-                    let: { "userId": "$addedBy", "addressId": "$addressId" },
+                    from: "User",
+                    let: { "userId": "$addedBy" },
                     pipeline: [
                         {
                             $match: {
@@ -434,15 +437,6 @@ exports.getAdminOrders = async(req,res)=>{
                                 lastName: 1,
                                 email: 1,
                                 mobile: 1,
-                                address: {
-                                    $arrayElemAt: [{
-                                        $filter: {
-                                            input: '$addresses',
-                                            as: 'address',
-                                            cond: { $eq: ['$$address._id', '$$addressId'] }
-                                        }
-                                    }, 0]
-                                },
                             }
                         }
                     ],
@@ -452,10 +446,209 @@ exports.getAdminOrders = async(req,res)=>{
             {
                 $unwind: { path: "$userData", preserveNullAndEmptyArrays: true },
             },
+            {
+                $lookup: {
+                    from: "UserAddress",
+                    let: { "userId": "$addedBy", "addressId": "$addressId" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$userId", "$$userId"] },
+                                        { $eq: ["$_id", "$$addressId"] },
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                address: 1,
+                                area: 1,
+                                landMark: 1,
+                                pinCode: 1,
+                                city:1,
+                                state:1,
+                                country:1
+                            }
+                        }
+                    ],
+                    as: "UserAddressData"
+                },
+            },
+            {
+                $unwind: { path: "$UserAddressData", preserveNullAndEmptyArrays: true },
+            },
         )
         const data = await Order.aggregate(aggregate);
 
         if (!data) {
+            return res.status(404).send({
+                status: 0,
+                message: "Record not found",
+                data: [],
+            });
+        }
+
+        return res.status(200).send({
+            status: 0,
+            message: "Record fetched successfully",
+            data: data,
+        });
+    } catch (error) {
+        console.log("Catch Error:==>", error);
+        return res.status(500).send({
+            status: 0,
+            message: "Internal Server Error",
+            data: [],
+        });
+    }
+}
+
+
+exports.getVendorOrders = async(req,res)=>{
+    try {
+        const {skip , limit,search,vendorId} = req.body;
+
+        if ( !mongoose.Types.ObjectId.isValid(vendorId) )
+            {
+               return res.status(403).send({
+                   status: 0,
+                   message: "Invalid request",
+                   data: [],
+               });
+           }
+   
+           const { loginUser } = req;
+           if (loginUser?._id != vendorId ) {
+               return res.status(401).send({ message: "Unauthorized access1."});
+           }
+   
+           if (!(loginUser?.role === "Vendor")) {
+               return res.status(403).send({ status: 0, message: "Unauthorized access2."});
+           }
+   
+           let sorting = { _id: -1 }
+   
+           const aggregate = [
+               // { $match: { ...condition } },
+               { $sort: sorting }
+           ];
+           if (typeof skip !== "undefined" && typeof limit !== "undefined") {
+               aggregate.push({ $skip: skip }, { $limit: limit }, { $sort: sorting });
+           }
+
+           aggregate.push(
+            {
+                $lookup: {
+                    from: "Product",
+                    let: { "productId": "$productId", "variantId": "$variantId" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$_id", "$$productId"] },
+                                        { $eq: ["$isDeleted", false] },
+                                        { $eq: ["$isPublic", true] },
+
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                name: 1,
+                                addedBy: 1,
+                                variant: {
+                                    $arrayElemAt: [{
+                                        $filter: {
+                                            input: '$variants',
+                                            as: 'variant',
+                                            cond: { $eq: ['$$variant._id', '$$variantId'] }
+                                        }
+                                    }, 0]
+                                },
+                            }
+                        }
+                    ],
+                    as: "productData"
+                },
+            },
+            {
+                $unwind: { path: "$productData", preserveNullAndEmptyArrays: true },
+            },
+            {
+                $match:{"productData.addedBy":new mongoose.Types.ObjectId(vendorId)}
+            },
+            {
+                $lookup: {
+                    from: "User",
+                    let: { "userId": "$addedBy" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$_id", "$$userId"] },
+                                        { $eq: ["$isLoggedOut", false] },
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                firstName: 1,
+                                lastName: 1,
+                                email: 1,
+                                mobile: 1,
+                            }
+                        }
+                    ],
+                    as: "userData"
+                },
+            },
+            {
+                $unwind: { path: "$userData", preserveNullAndEmptyArrays: true },
+            },
+            {
+                $lookup: {
+                    from: "UserAddress",
+                    let: { "userId": "$addedBy", "addressId": "$addressId" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$userId", "$$userId"] },
+                                        { $eq: ["$_id", "$$addressId"] },
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                address: 1,
+                                area: 1,
+                                landMark: 1,
+                                pinCode: 1,
+                                city:1,
+                                state:1,
+                                country:1
+                            }
+                        }
+                    ],
+                    as: "UserAddressData"
+                },
+            },
+            {
+                $unwind: { path: "$UserAddressData", preserveNullAndEmptyArrays: true },
+            },
+        )
+
+        const data = await Order.aggregate(aggregate);
+
+        if (!data || data.length === 0) {
             return res.status(404).send({
                 status: 0,
                 message: "Record not found",
