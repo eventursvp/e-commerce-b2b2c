@@ -2,6 +2,8 @@ const SaveForLater = require("model-hook/Model/saveforlaterModel");
 const Product = require("model-hook/Model/productModel");
 const Cart = require("model-hook/Model/cartModel");
 const mongoose = require("mongoose");
+const { createApplicationLog } = require("model-hook/common_function/createLog");
+
 
 exports.removeSaveForLater = async (req, res) => {
     try {
@@ -50,6 +52,9 @@ exports.removeSaveForLater = async (req, res) => {
                 data: [],
             });
         }
+
+        await createApplicationLog("SaveForLater", "remove save for later", {}, {}, addedBy);
+
 
         return res.status(200).send({
             status: 1,

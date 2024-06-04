@@ -6,6 +6,8 @@ const router = express.Router();
 const {createOrder} = require('../controller/createOrder');
 const {getOrder,getAllOrders,getAdminOrders,getVendorOrders} = require('../controller/getOrder');
 const {cancelOrder} = require('../controller/cancelOrder');
+const {returnOrder} = require('../controller/returnOrder');
+const {deliverdOrder} = require('../controller/deliverdOrder');
 
 router.post('/createOrder',jwtValidation,createOrder);
 router.post('/getOrder',jwtValidation,getOrder);
@@ -16,6 +18,10 @@ router.post('/getVendorOrders',jwtValidation,getVendorOrders);
 router.post('/getAdminOrders',jwtValidation,getAdminOrders);
 
 router.post('/cancelOrder',jwtValidation,cancelOrder);
+router.post('/returnOrder',jwtValidation,returnOrder);
+router.post('/deliverdOrder',jwtValidation,deliverdOrder);
+
+
 
 
 

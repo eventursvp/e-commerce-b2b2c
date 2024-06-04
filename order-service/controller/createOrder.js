@@ -5,6 +5,7 @@ const Cart = require("model-hook/Model/cartModel");
 const mongoose = require("mongoose");
 const orderid = require("order-id")("key");
 const Coupon = require("model-hook/Model/userCoupon");
+const { createApplicationLog } = require("model-hook/common_function/createLog");
 
 
 const formatDate = (date) => {
@@ -223,6 +224,8 @@ exports.createOrder = async (req, res) => {
                     productAvailable: "OUTOFSTOCK",
                 }
             );
+            await createApplicationLog("Order", "order created", {}, {}, addedBy);
+
             return res.status(201).send({
                 status: 1,
                 message: "Order created successfully",
@@ -285,6 +288,8 @@ exports.createOrder = async (req, res) => {
                     productAvailable: "OUTOFSTOCK",
                 }
             );
+
+            await createApplicationLog("Order", "order created", {}, {}, addedBy);
 
             return res.status(201).send({
                 status: 1,

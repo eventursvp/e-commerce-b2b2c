@@ -1,5 +1,6 @@
 const Gift = require("model-hook/Model/giftModel");
 const mongoose = require("mongoose");
+const { createApplicationLog } = require("model-hook/common_function/createLog");
 
 exports.addGift = async(req,res)=>{
     try {
@@ -33,7 +34,9 @@ exports.addGift = async(req,res)=>{
             return res.status(404).send({status:0,message:"Error in creating gift",data:[]});
         }
 
-        return res.status(201).send({status:1,message:"Record added successfully!",data:data})
+        await createApplicationLog("Gift", "add gift", {}, {}, addedBy);
+
+        return res.status(201).send({status:1,message:"Record added successfully!",data:data});
     } catch (error) {
         console.log("Catch Error:==>", error);
         return res.status(500).send({

@@ -7,9 +7,9 @@ const {createNotification} = require("model-hook/common_function/createNotificat
 const { createApplicationLog } = require("model-hook/common_function/createLog");
 
 
-exports.cancelOrder = async (req, res) => {
+exports.returnOrder = async(req,res)=>{
     try {
-        const { orderId ,addedBy} = req.body;
+        const {orderId,addedBy} = req.body;
 
         const { loginUser } = req;
         if (loginUser._id != addedBy) {
@@ -19,7 +19,6 @@ exports.cancelOrder = async (req, res) => {
         if (!(loginUser?.role === "User")) {
             return res.status(403).send({ status: 0, message: "Unauthorized access."});
         }
-
         if ( !(mongoose.Types.ObjectId.isValid(addedBy) && mongoose.Types.ObjectId.isValid(orderId)) )
             {
                return res.status(403).send({
@@ -33,18 +32,22 @@ exports.cancelOrder = async (req, res) => {
             return res.status(404).json({ status: 0, message: 'Order not found' });
         }
 
-        if (order.orderStatus === 'CANCELLED' || order.orderStatus === 'COMPLETED' || order.orderStatus === 'RETURN') {
-            return res.status(400).send({ status: 0, message: 'Order cannot be cancelled',data:[] });
+        if (order.orderStatus !== 'DELIVERED') {
+            return res.status(400).send({ status: 0, message: 'Order cannot be return',data:[] });
         }
 
-        order.orderStatus = 'CANCELLED';
+        order.orderStatus = 'RETURN';
         await order.save();
-        await createNotification(addedBy,"Order","OrderCancelled","Order cancelled","Order cancelled Successfully",order._id);
-        await createApplicationLog("Order", "order cancelled", {}, {}, addedBy);
+        await createNotification(addedBy,"Order","OrderReturned","Order returned","Order returned Successfully",order._id);
+        await createApplicationLog("Order", "return order", {}, {}, addedBy);
 
-        return res.status(200).json({ status: 1, message: 'Order cancelled successfully'});
+        return res.status(200).json({ status: 1, message: 'Order return successfully'});
     } catch (error) {
-        console.error('Error cancelling order:', error);
-        return res.status(500).json({ status: 0, message: 'Internal Server Error' });
+        console.log("Catch Error:==>", error);
+        return res.status(500).send({
+            status: 0,
+            message: "Internal Server Error",
+            data: [],
+        });
     }
-};
+}

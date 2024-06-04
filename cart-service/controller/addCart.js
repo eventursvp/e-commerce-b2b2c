@@ -2,6 +2,8 @@ const Cart = require("model-hook/Model/cartModel");
 const User = require("model-hook/Model/userModel");
 const Vendor = require("model-hook/Model/vendorModel");
 const Product = require("model-hook/Model/productModel");
+const { createApplicationLog } = require("model-hook/common_function/createLog");
+
 
 const mongoose = require("mongoose");
 
@@ -103,6 +105,9 @@ exports.addToCart = async (req, res) => {
                 data: [],
             });
         }
+
+        await createApplicationLog("Cart", "user add to cart", {}, {}, addedBy);
+
 
         return res.status(200).send({
             status: 1,

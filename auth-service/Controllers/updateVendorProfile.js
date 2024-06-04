@@ -1,11 +1,9 @@
 const Vendor = require("model-hook/Model/vendorModel");
-const mongoose = require('mongoose')
-const { createApplicationLog } = require("model-hook/common_function/createLog")
+const mongoose = require('mongoose');
+const { createApplicationLog } = require("model-hook/common_function/createLog");
 
 
-
-
-exports.updateVendor = async (req, res, next) => {
+exports.updateVendor = async (req, res) => {
     try {
         const { vendorId, fullName, gender } = req.body
         const { loginUser } = req
