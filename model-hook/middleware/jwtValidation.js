@@ -88,41 +88,38 @@ exports.jwtValidation = async (req, res, next) => {
                 return res.status(401).send({ status: 0, message: "Unauthorized access." });
             }
 
-            switch (foundUser.role) {
-                case "User":
-                    if (foundUser.isLoggedOut) {
-                        return res.status(401).send({ status: 0, message: "Please log in again." });
-                    }
-                    if (!foundUser.emailVerified) {
-                        return res.status(401).send({ status: 0, message: "Please verify your email." });
-                    }
-                    break;
-                case "Vendor":
-                    if (foundUser.isLoggedOut) {
-                        return res.status(401).send({ status: 0, message: "Please log in again." });
-                    }
-                    if (!foundUser.emailVerified) {
-                        return res.status(401).send({ status: 0, message: "Please verify your email." });
-                    }
-                    if (foundUser.isBlocked) {
-                        return res.status(401).send({ status: 0, message: "Your account has been blocked." });
-                    }
-                    if (foundUser.isReject) {
-                        return res.status(401).send({ status: 0, message: "Your account has been rejected." });
-                    }
-                    break;
-                case "Admin":
-                    if (foundUser.isLoggedOut) {
-                        return res.status(401).send({ status: 0, message: "Please log in again." });
-                    }
-                    break;
-                default:
-                    return res.status(401).send({ status: 0, message: "Unauthorized access." });
+            if(user && user.role === "User"){
+                if (user.isLoggedOut) {
+                    return res.status(401).send({ status: 0, message: "Please log in again." });
+                }
+                if (!user.emailVerified) {
+                    return res.status(401).send({ status: 0, message: "Please verify your email." });
+                }
+            }else if(vendor && vendor.role === "Vendor"){
+                if (vendor.isLoggedOut) {
+                    return res.status(401).send({ status: 0, message: "Please log in again." });
+                }
+                if (!vendor.emailVerified) {
+                    return res.status(401).send({ status: 0, message: "Please verify your email." });
+                }
+                if (vendor.isBlocked) {
+                    return res.status(401).send({ status: 0, message: "Your account has been blocked." });
+                }
+                if (vendor.isReject) {
+                    return res.status(401).send({ status: 0, message: "Your account has been rejected." });
+                }
+            }else if( admin && admin.role === "Admin"){
+                if (admin.isLoggedOut) {
+                    return res.status(401).send({ status: 0, message: "Please log in again." });
+                }
+            }else{
+                return res.status(401).send({ status: 0, message: "user not found." });
             }
 
             req.loginUser = foundUser;
             next();
         });
+        
     } catch (error) {
         console.error(error);
         return res.status(500).send({ status: 0, message: "Something went wrong.", error });

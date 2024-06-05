@@ -14,6 +14,11 @@ const TermsAndCondition = new Schema({
         type: Schema.ObjectId,
         ref: 'Admin'
     },
+    productId: {
+        type: Schema.ObjectId,
+        ref: "Product",
+        default: null,
+      },
     isDeleted:
     {
         type: Boolean,
