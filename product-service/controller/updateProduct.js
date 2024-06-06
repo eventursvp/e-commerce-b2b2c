@@ -1,5 +1,6 @@
 const Product = require("model-hook/Model/productModel");
 const Admin = require("model-hook/Model/adminModel");
+const mongoose = require("mongoose")
 const { createApplicationLog } = require("model-hook/common_function/createLog");
 
 
@@ -57,7 +58,7 @@ exports.updateProduct = async (req, res) => {
         if(!data){
             return res.status(404).send({status:0,message:"Record not found",data:[]})
         }
-        const updatedProduct = await Product.findByIdAndUpdate({productId:productId,addedBy:addedBy}, productData, { new: true });
+        const updatedProduct = await Product.findByIdAndUpdate({_id:productId,addedBy:addedBy}, productData, { new: true });
 
         if (!updatedProduct) {
             return res.status(404).send({

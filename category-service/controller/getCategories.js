@@ -10,7 +10,7 @@ exports.getOneCategory = async (req, res) => {
 
         if (
             !(
-                // mongoose.Types.ObjectId.isValid(userId) &&
+                mongoose.Types.ObjectId.isValid(userId) &&
                 mongoose.Types.ObjectId.isValid(categoryId)
             )
         ) {
@@ -73,7 +73,7 @@ exports.getAllCategories = async (req, res) => {
             });
         }
         const { loginUser } = req;
-        if (loginUser._id != addedBy) {
+        if (loginUser._id != userId) {
             return res.status(401).send({ message: "Unauthorized access."});
         }
 
@@ -116,7 +116,7 @@ exports.getOneSpecificCategory = async (req, res) => {
 
         if (
             !(
-                // mongoose.Types.ObjectId.isValid(userId) &&
+                mongoose.Types.ObjectId.isValid(userId) &&
                 mongoose.Types.ObjectId.isValid(specificCategoryId)
             )
         ) {
@@ -127,7 +127,7 @@ exports.getOneSpecificCategory = async (req, res) => {
             });
         }
         const { loginUser } = req;
-        if (loginUser._id != addedBy) {
+        if (loginUser._id != userId) {
             return res.status(401).send({ message: "Unauthorized access."});
         }
 
@@ -181,7 +181,7 @@ exports.getAllSpecificCategories = async (req, res) => {
             });
         }
         const { loginUser } = req;
-        if (loginUser._id != addedBy) {
+        if (loginUser._id != userId) {
             return res.status(401).send({ message: "Unauthorized access."});
         }
 
@@ -222,8 +222,21 @@ exports.getOneSubCategory = async (req, res) => {
     try {
         const { userId, subCategoryId } = req.body;
 
+        if (
+            !(
+                mongoose.Types.ObjectId.isValid(userId) &&
+                mongoose.Types.ObjectId.isValid(subCategoryId)
+            )
+        ) {
+            return res.status(403).send({
+                status: 0,
+                message: "Invalid request",
+                data: [],
+            });
+        }
+
         const { loginUser } = req;
-        if (loginUser._id != addedBy) {
+        if (loginUser._id != userId) {
             return res.status(401).send({ message: "Unauthorized access."});
         }
 

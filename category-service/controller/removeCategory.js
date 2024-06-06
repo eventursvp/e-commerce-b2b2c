@@ -154,8 +154,8 @@ exports.removeSpecificCategory = async(req,res) =>{
         const categoryData = await Category.findOne({
             _id: specificCategoryId,
             isDeleted: false,
-            categoryId:{$ne :null},
-            subCategoryId:{$ne :null},
+            parentCategoryId:{$ne :null},
+            childCategoryId:{$ne :null},
 
         });
 

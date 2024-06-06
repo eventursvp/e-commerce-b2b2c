@@ -17,6 +17,8 @@ router.post('/getAllWishlist',jwtValidation,getAllWishlist);
 router.post('/removeWishlist',jwtValidation,removeWishlist);
 
 
+
+//wishlist collection
 router.post('/createCollection',jwtValidation,createCollection);
 router.post('/addToCollection',jwtValidation,addToCollection);
 

@@ -124,8 +124,13 @@ if (!variant) {
                 .send({ status: 0, message: "Record not found 2", data: [] });
         }
 
-        console.log("Price==>",variant.price);
-        const data = await WishlistCollection.findByIdAndUpdate(
+        const itemExists = wishlistCollectionData.items.some(
+            item => item.productId.toString() === productId && item.variantId.toString() === variantId
+        );
+
+        if (itemExists) {
+            return res.status(409).send({ status: 0, message: "Product already exists in this collection", data: [] });
+        }        const data = await WishlistCollection.findByIdAndUpdate(
             collectionId,
             { $push: { items: { productId,variantId,productData,price:variant.price } } },
             { new: true }

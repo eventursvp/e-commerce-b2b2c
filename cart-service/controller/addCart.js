@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 
 exports.addToCart = async (req, res) => {
     try {
-        const { addedBy, productId, variantId,vendorId } = req.body;
+        const { addedBy, productId, variantId, } = req.body;
 
         // const { loginUser } = req;
         // if (loginUser._id != addedBy) {
@@ -24,8 +24,7 @@ exports.addToCart = async (req, res) => {
             !(
                 mongoose.Types.ObjectId.isValid(productId) &&
                 mongoose.Types.ObjectId.isValid(addedBy) &&
-                mongoose.Types.ObjectId.isValid(variantId) &&
-                mongoose.Types.ObjectId.isValid(vendorId)
+                mongoose.Types.ObjectId.isValid(variantId) 
 
             )
         ) {
@@ -36,7 +35,7 @@ exports.addToCart = async (req, res) => {
             });
         }
 
-        if (!(addedBy && productId && variantId && vendorId)) {
+        if (!(addedBy && productId && variantId )) {
             return res.status(403).send({
                 status: 0,
                 message: "All fields are required",
@@ -48,7 +47,6 @@ exports.addToCart = async (req, res) => {
             addedBy: addedBy,
             productId: productId,
             variantId: variantId,
-            vendorId:vendorId
         });
 
         if (alreadyExist) {
@@ -57,7 +55,6 @@ exports.addToCart = async (req, res) => {
                     addedBy: addedBy,
                     productId: productId,
                     variantId: variantId,
-                    vendorId:vendorId
                 },
                 { $inc: { quantity: +1 } },
                 { new: true }

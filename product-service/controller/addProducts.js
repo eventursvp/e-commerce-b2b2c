@@ -169,54 +169,54 @@ exports.addProduct = async (req, res) => {
             });
         }
 
-        // const categoriesData = await Categories.findOne({
-        //     _id: categoryId,
-        //     active: true,
-        //     isDeleted: false,
-        //     parentCategoryId:{$eq:null},
-        //     childCategoryId:{$eq:null}
-        // });
+        const categoriesData = await Categories.findOne({
+            _id: categoryId,
+            active: true,
+            isDeleted: false,
+            parentCategoryId:{$eq:null},
+            childCategoryId:{$eq:null}
+        });
 
-        // if (!categoriesData) {
-        //     return res.status(404).send({
-        //         status: 0,
-        //         message: "Category not found",
-        //         data: [],
-        //     });
-        // }
+        if (!categoriesData) {
+            return res.status(404).send({
+                status: 0,
+                message: "Category not found",
+                data: [],
+            });
+        }
 
-        // const SubCategoriesData = await Categories.findOne({
-        //     _id: subCategoryId,
-        //     active: true,
-        //     isDeleted: false,
-        //     parentCategoryId:{$ne:null},
-        //     childCategoryId:{$eq:null}
-        // });
+        const SubCategoriesData = await Categories.findOne({
+            _id: subCategoryId,
+            active: true,
+            isDeleted: false,
+            parentCategoryId:{$ne:null},
+            childCategoryId:{$eq:null}
+        });
 
-        // if (!SubCategoriesData) {
-        //     return res.status(404).send({
-        //         status: 0,
-        //         message: "SubCategory not found",
-        //         data: [],
-        //     });
-        // }
+        if (!SubCategoriesData) {
+            return res.status(404).send({
+                status: 0,
+                message: "SubCategory not found",
+                data: [],
+            });
+        }
 
 
-        // const SpecificCategoriesData = await Categories.findOne({
-        //     _id: specificIdCategoryId,
-        //     active: true,
-        //     isDeleted: false,
-        //     parentCategoryId:{$ne:null},
-        //     childCategoryId:{$ne:null}
-        // });
+        const SpecificCategoriesData = await Categories.findOne({
+            _id: specificIdCategoryId,
+            active: true,
+            isDeleted: false,
+            parentCategoryId:{$ne:null},
+            childCategoryId:{$ne:null}
+        });
 
-        // if (!SpecificCategoriesData) {
-        //     return res.status(404).send({
-        //         status: 0,
-        //         message: "SubCategory not found",
-        //         data: [],
-        //     });
-        // }
+        if (!SpecificCategoriesData) {
+            return res.status(404).send({
+                status: 0,
+                message: "SubCategory not found",
+                data: [],
+            });
+        }
 
         if (variants && Array.isArray(variants) && variants.length > 0) {
             const variant = variants[0];
