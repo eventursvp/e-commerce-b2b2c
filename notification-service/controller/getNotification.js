@@ -6,30 +6,30 @@ const {
 
 exports.getOneNotification = async (req, res) => {
     try {
-        const { userId, notificationId } = req.body;
+        const { receiverId, notificationId } = req.body;
 
         if (
             Object.keys(req.body).length !== 2 ||
-            !(req.body.userId && req.body.notificationId)
+            !(req.body.receiverId && req.body.notificationId)
         ) {
             return res
                 .status(400)
                 .send({
                     status: 0,
                     message:
-                        "Invalid request. Only userid and notificationid allowed in the request body.",
+                        "Invalid request. Only receiverId and notificationid allowed in the request body.",
                     data: [],
                 });
         }
 
         const { loginUser } = req;
-        if (loginUser._id != userId) {
+        if (loginUser._id != receiverId) {
             return res.status(401).send({ message: "Unauthorized access." });
         }
 
         if (
             !(
-                mongoose.Types.ObjectId.isValid(userId) &&
+                mongoose.Types.ObjectId.isValid(receiverId) &&
                 mongoose.Types.ObjectId.isValid(notificationId)
             )
         ) {
@@ -38,7 +38,7 @@ exports.getOneNotification = async (req, res) => {
                 .send({ status: 0, message: "Invalid request", data: [] });
         }
 
-        const data = await Notification.findOne({ _id: notificationId });
+        const data = await Notification.findOne({ _id: notificationId,receiverId:new mongoose.Types.ObjectId(receiverId) });
 
         if (!data) {
             return res.status(404).send({
@@ -66,7 +66,7 @@ exports.getOneNotification = async (req, res) => {
             "view one notification",
             {},
             {},
-            userId
+            receiverId
         );
 
         return res.status(200).send({
@@ -86,31 +86,31 @@ exports.getOneNotification = async (req, res) => {
 
 exports.getAllNotification = async (req, res) => {
     try {
-        const { userId } = req.body;
+        const { receiverId } = req.body;
 
-        if (Object.keys(req.body).length !== 1 || !req.body.userId) {
+        if (Object.keys(req.body).length !== 1 || !req.body.receiverId) {
             return res
                 .status(400)
                 .send({
                     status: 0,
                     message:
-                        "Invalid request. Only userId is allowed in the request body.",
+                        "Invalid request. Only receiverId is allowed in the request body.",
                     data: [],
                 });
         }
 
         const { loginUser } = req;
-        if (loginUser._id != userId) {
+        if (loginUser._id != receiverId) {
             return res.status(401).send({ message: "Unauthorized access." });
         }
 
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
+        if (!mongoose.Types.ObjectId.isValid(receiverId)) {
             return res
                 .status(403)
                 .send({ status: 0, message: "Invalid request", data: [] });
         }
 
-        const data = await Notification.find({ userId: userId });
+        const data = await Notification.find({ receiverId: new mongoose.Types.ObjectId(receiverId) });
 
         if (!data || data.length === 0) {
             return res.status(404).send({
@@ -125,7 +125,7 @@ exports.getAllNotification = async (req, res) => {
             "view All notification",
             {},
             {},
-            userId
+            receiverId
         );
 
         return res.status(200).send({
@@ -145,30 +145,30 @@ exports.getAllNotification = async (req, res) => {
 
 exports.removeNotification = async (req, res) => {
     try {
-        const { userId, notificationId } = req.body;
+        const { receiverId, notificationId } = req.body;
 
         if (
             Object.keys(req.body).length !== 2 ||
-            !(req.body.userId && req.body.notificationId)
+            !(req.body.receiverId && req.body.notificationId)
         ) {
             return res
                 .status(400)
                 .send({
                     status: 0,
                     message:
-                        "Invalid request. Only userid and notificationid allowed in the request body.",
+                        "Invalid request. Only receiverId and notificationid allowed in the request body.",
                     data: [],
                 });
         }
 
         const { loginUser } = req;
-        if (loginUser._id != userId) {
+        if (loginUser._id != receiverId) {
             return res.status(401).send({ message: "Unauthorized access." });
         }
 
         if (
             !(
-                mongoose.Types.ObjectId.isValid(userId) &&
+                mongoose.Types.ObjectId.isValid(receiverId) &&
                 mongoose.Types.ObjectId.isValid(notificationId)
             )
         ) {
@@ -178,7 +178,7 @@ exports.removeNotification = async (req, res) => {
         }
 
         const data = await Notification.findOneAndUpdate(
-            { _id: notificationId, userId: userId, isDeleted: false },
+            { _id: notificationId, receiverId: new mongoose.Types.ObjectId(receiverId), isDeleted: false },
             { $set: { isDeleted: true } },
             { new: true }
         );
@@ -190,6 +190,14 @@ exports.removeNotification = async (req, res) => {
                 data: [],
             });
         }
+
+        await createApplicationLog(
+            "Notification",
+            "remove notification",
+            {},
+            {},
+            receiverId
+        );
 
         return res
             .status(200)

@@ -665,7 +665,7 @@ exports.getVendorOrders = async(req,res)=>{
             });
         }
 
-        await createApplicationLog("Order", "fetched all admin orders", {}, {}, vendorId);
+        await createApplicationLog("Order", "fetched all vendor orders", {}, {}, vendorId);
 
 
         return res.status(200).send({

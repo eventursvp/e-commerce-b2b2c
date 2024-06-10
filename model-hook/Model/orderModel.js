@@ -6,7 +6,7 @@ let Orders = new Schema(
         addedBy: { type: Schema.ObjectId, ref: "Users", index: true },
         orderStatus: {
             type: String,
-            enum: ["UNSHIPPED", "PENDING", "PACKED", "CANCELLED", "RETURN","DISPATCHED","DELIVERED","PROCESSING","FAILED","REFUND","EXCHANGE"],
+            enum: ["UNSHIPPED", "PENDING", "PACKED", "CANCELLED", "RETURN","DISPATCHED","DELIVERED","PROCESSING","FAILED","REFUND","EXCHANGE","SHIPPED"],
             default: "PENDING",
         },
         orderNumber: { type: String, unique: true },

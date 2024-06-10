@@ -32,13 +32,15 @@ exports.returnOrder = async(req,res)=>{
             return res.status(404).json({ status: 0, message: 'Order not found' });
         }
 
+        const productData = await Product.findOne({_id:order.productId});
+
         if (order.orderStatus !== 'DELIVERED') {
             return res.status(400).send({ status: 0, message: 'Order cannot be return',data:[] });
         }
 
         order.orderStatus = 'RETURN';
         await order.save();
-        await createNotification(addedBy,"Order","OrderReturned","Order returned","Order returned Successfully",order._id);
+        await createNotification(order.addedBy,productData.addedBy,"Order","OrderReturned","Order returned","Order returned Successfully");
         await createApplicationLog("Order", "return order", {}, {}, addedBy);
 
         return res.status(200).json({ status: 1, message: 'Order return successfully'});

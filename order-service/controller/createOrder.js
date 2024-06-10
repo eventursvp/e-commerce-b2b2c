@@ -7,6 +7,7 @@ const orderid = require("order-id")("key");
 const Coupon = require("model-hook/Model/userCoupon");
 const UserAddress = require("model-hook/Model/userAddressModel");
 const { createApplicationLog } = require("model-hook/common_function/createLog");
+const {createNotification} = require("model-hook/common_function/createNotification");
 
 
 const formatDate = (date) => {
@@ -235,7 +236,9 @@ exports.createOrder = async (req, res) => {
                     productAvailable: "OUTOFSTOCK",
                 }
             );
+
             await createApplicationLog("Order", "order created", {}, {}, addedBy);
+            await createNotification(order.addedBy,productData.addedBy,"Order","OrderCreate","Order Created","Order created Successfully");
 
             return res.status(201).send({
                 status: 1,
@@ -301,9 +304,10 @@ exports.createOrder = async (req, res) => {
             );
 
             await createApplicationLog("Order", "order created", {}, {}, addedBy);
+            await createNotification(order.addedBy,productData.addedBy,"Order","OrderCreate","Order Created","Order created Successfully");
 
             return res.status(201).send({
-                status: 1,
+                status: 1,  
                 message: "Order created successfully",
                 data: order,
             });

@@ -24,6 +24,7 @@ exports.removeCategory = async(req,res) =>{
                 data: [],
             });
         }
+
         const categoryData = await Category.findOne({
             _id: categoryId,
             isDeleted: false,
@@ -36,6 +37,7 @@ exports.removeCategory = async(req,res) =>{
                 data: [],
             });
         }
+
         const resp = await Category.findByIdAndUpdate(
             categoryId,
             { $set: { isDeleted: true } },
@@ -55,6 +57,7 @@ exports.removeCategory = async(req,res) =>{
             messae: "Error in  deleting record",
             data: [],
         });
+        
     } catch (error) {
         console.log("Catch Error:==>", error);
         return res.status(500).send({

@@ -2,10 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const NotificationSchema = new Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+    senderId: {
+        type: Schema.Types.Mixed,
+      },
+    receiverId: {
+        type: Schema.Types.Mixed,
     },
     type: {
         type: String,
@@ -17,6 +18,7 @@ const NotificationSchema = new Schema({
         required: true,
         enum: [
             'OrderPlaced', 'OrderShipped', 'OrderDelivered', 'OrderCancelled', 'OrderReturned',
+            'OrderCreate','UpdateStatus',
             'BackInStock', 'NewProductLaunch','AccountCreated', 'PasswordChanged', 
             'AccountSuspended', 'AccountReinstated',
             'NewOffers', 'SeasonalSales', 'PersonalizedRecommendations',
@@ -31,10 +33,6 @@ const NotificationSchema = new Schema({
     message: {
         type: String,
         required: true
-    },
-    data: {
-        type: Schema.Types.Mixed, // This field can store any related data (e.g., orderId, productId)
-        default: {}
     },
     isRead: {
         type: Boolean,

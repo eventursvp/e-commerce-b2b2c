@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 
 exports.addToCart = async (req, res) => {
     try {
-        const { addedBy, productId, variantId, } = req.body;
+        const { addedBy, productId, variantId } = req.body;
 
         const { loginUser } = req;
         if (loginUser._id != addedBy) {

@@ -33,13 +33,15 @@ exports.deliverdOrder = async(req,res)=>{
             return res.status(404).json({ status: 0, message: 'Order not found' });
         }
 
+        const productData = await Product.findOne({_id:order.productId});
+
         if (order.orderStatus === 'DELIVERED' || order.orderStatus === 'CANCELLED' || order.orderStatus === 'RETURN') {
             return res.status(400).send({ status: 0, message: 'Order cannot be deliverd',data:[] });
         }
 
         order.orderStatus = 'DELIVERED';
         await order.save();
-        await createNotification(addedBy,"Order","OrderDelivered","Order deliverd","Order deliverd Successfully",order._id);
+        await createNotification(order.addedBy,productData.addedBy,"Order","OrderDelivered","Order deliverd","Order deliverd Successfully");
         await createApplicationLog("Order", "order deliverd", {}, {}, addedBy);
 
         return res.status(200).json({ status: 1, message: 'Order deliverd successfully'});
