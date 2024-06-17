@@ -2,6 +2,8 @@ const Order = require("model-hook/Model/orderModel");
 const User = require("model-hook/Model/userModel");
 const Product = require("model-hook/Model/productModel");
 const Cart = require("model-hook/Model/cartModel");
+const UserAddress = require("model-hook/Model/userAddressModel");
+const Invoice = require("model-hook/Model/invoiceModel");
 const mongoose = require('mongoose');
 const {createNotification} = require("model-hook/common_function/createNotification");
 const { createApplicationLog } = require("model-hook/common_function/createLog");
@@ -40,6 +42,32 @@ exports.returnOrder = async(req,res)=>{
 
         order.orderStatus = 'RETURN';
         await order.save();
+
+        const addressData = await UserAddress.findOne({userId:addedBy});
+
+        if(!addressData){
+            return res.status(404).send({
+                status: 0,
+                message: "Address not available",
+                data: [],
+            });
+        }
+        const invoice = {
+            addressId:addressData._id,
+            orderId:order._id,
+            userId:order.addedBy,
+            addedBy:productData.addedBy
+        }
+
+        const invoiceData = await new Invoice(invoice).save();
+
+        if (!invoiceData) {
+            return res.status(403).send({
+                status: 0,
+                message: "Invoice not create",
+                data: [],
+            });
+        }
         await createNotification(order.addedBy,productData.addedBy,"Order","OrderReturned","Order returned","Order returned Successfully");
         await createApplicationLog("Order", "return order", {}, {}, addedBy);
 

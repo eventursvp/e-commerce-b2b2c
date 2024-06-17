@@ -3,7 +3,7 @@ const { jwtValidation } = require("model-hook/middleware/jwtValidation")
 
 const router = express.Router();
 
-const {createOrder} = require('../controller/createOrder');
+const {createOrder,replaceOrder} = require('../controller/createOrder');
 const {getOrder,getAllOrders,getAdminOrders,getVendorOrders} = require('../controller/getOrder');
 const {cancelOrder} = require('../controller/cancelOrder');
 const {returnOrder} = require('../controller/returnOrder');
@@ -24,6 +24,9 @@ router.post('/returnOrder',jwtValidation,returnOrder);
 router.post('/deliverdOrder',jwtValidation,deliverdOrder);
 
 router.post('/updateStatus',jwtValidation,updateStatus);
+
+router.post('/replaceOrder',jwtValidation,replaceOrder);
+
 
 
 
