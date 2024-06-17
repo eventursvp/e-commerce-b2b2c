@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const orderid = require("order-id")("key");
 const Coupon = require("model-hook/Model/userCoupon");
 const UserAddress = require("model-hook/Model/userAddressModel");
+const Invoice = require("model-hook/Model/invoiceModel");
 const { createApplicationLog } = require("model-hook/common_function/createLog");
 const {createNotification} = require("model-hook/common_function/createNotification");
 
@@ -192,6 +193,24 @@ exports.createOrder = async (req, res) => {
                 couponCode: couponCode,
             };
             const order = await new Order(obj).save();
+
+            const invoice = {
+                addressId:addressId,
+                orderId:order._id,
+                userId:order.addedBy,
+                addedBy:productData.addedBy
+            }
+
+            const invoiceData = await new Invoice(invoice).save();
+
+            if (!invoiceData) {
+                return res.status(403).send({
+                    status: 0,
+                    message: "Invoice not create",
+                    data: [],
+                });
+            }
+
             if (!order) {
                 return res.status(403).send({
                     status: 0,
@@ -258,10 +277,28 @@ exports.createOrder = async (req, res) => {
                 couponCode: couponCode,
             };
             const order = await new Order(obj).save();
+
             if (!order) {
                 return res.status(403).send({
                     status: 0,
                     message: "Order not create",
+                    data: [],
+                });
+            }
+
+            const invoice = {
+                addressId:addressId,
+                orderId:order._id,
+                userId:order.addedBy,
+                addedBy:productData.addedBy
+            }
+
+            const invoiceData = await new Invoice(invoice).save();
+
+            if (!invoiceData) {
+                return res.status(403).send({
+                    status: 0,
+                    message: "Invoice not create",
                     data: [],
                 });
             }

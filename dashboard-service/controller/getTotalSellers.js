@@ -14,7 +14,7 @@ exports.getTotalSellers = async (req, res) => {
             return res.status(401).send({ message: "Unauthorized access." });
         }
 
-        if (!(loginUser?.role === "Vendor")) {
+        if (!(loginUser?.role === "Admin")) {
             return res
                 .status(403)
                 .send({ status: 0, message: "Unauthorized access." });
@@ -102,12 +102,13 @@ exports.getTotalSellers = async (req, res) => {
             });
             return res
                 .status(200)
-                .send({ sellerAnalytics: store, totalSellers: totalSellers });
+                .send({status:1,message:"Record fetched successfull", sellerAnalytics: store, totalSellers: totalSellers });
         } else {
             let date = new Date();
             if (yearWise) {
                 date = new Date(year, 1, 1);
             }
+
             const yearStart = moment(date).startOf("year").toISOString();
             const yearEnd = moment(date).endOf("year").toISOString();
 
@@ -192,13 +193,16 @@ exports.getTotalSellers = async (req, res) => {
                     },
                 },
             ];
+
             data = await Vendor.aggregate(query);
             let sellerAnalytics = {};
+
             // monthsInString.forEach((month, index) => {
             //     if (month !== null) {
             //         sellerAnalytics[month] = 0;
             //     }
             // });
+            
             if (data && data.length) {
                 Object.assign(sellerAnalytics, data[0].sellerAnalytics);
             }

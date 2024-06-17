@@ -31,6 +31,7 @@ exports.getTotalCount = async (req, res) => {
             isDeleted: false,
             isReject: false,
         });
+        
         const userCount = await User.countDocuments({ isLoggedOut: false });
 
         const data = {

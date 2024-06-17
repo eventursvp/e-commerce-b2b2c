@@ -6,7 +6,7 @@ const router = express.Router();
 const {getTotalCount} = require('../controller/getTotalCount');
 const {getTotalUsers} = require('../controller/getTotalUsers');
 const {getTotalSellers} = require('../controller/getTotalSellers');
-const {getTotalSales} = require('../controller/getTotalSeles');
+const {getTotalSales,getOrderStats} = require('../controller/getTotalSeles');
 
 
 
@@ -14,7 +14,7 @@ router.post('/getTotalCount',jwtValidation,getTotalCount);
 router.post('/getTotalUsers',jwtValidation,getTotalUsers);
 router.post('/getTotalSellers',jwtValidation,getTotalSellers);
 router.post('/getTotalSales',jwtValidation,getTotalSales);
-// router.post('/removeFaqQuestion',jwtValidation,removeFaqQuestion);
+router.post('/getOrderStats',jwtValidation,getOrderStats);
 
 
 
