@@ -16,8 +16,8 @@ router.post('/publishProduct',jwtValidation,publishProduct);
 
 router.post('/getOneProduct',jwtValidation,getOneProduct);
 router.post('/getAllProduct',jwtValidation,getAllProducts);
-router.post('/compareProduct',jwtValidation,compareProduct);
-router.post('/getSimilarProducts',jwtValidation,getSimilarProducts);
+router.post('/compareProduct',/*jwtValidation,*/compareProduct);
+router.post('/getSimilarProducts',/*jwtValidation,*/getSimilarProducts);
 router.post('/getRecentlyViewedProducts',jwtValidation,getRecentlyViewedProducts);
 
 router.post('/removeProductFromRecentView',jwtValidation,removeProductFromRecentView)

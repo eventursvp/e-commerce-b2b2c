@@ -62,7 +62,7 @@ exports.getAllWishlist = async (req, res) => {
             },
             {
                 $lookup: {
-                    from: "reviews",
+                    from: "ProductRatingReview",
                     let: { productId: "$productData._id" },
                     pipeline: [
                         {
@@ -77,10 +77,10 @@ exports.getAllWishlist = async (req, res) => {
                         },
                         {
                             $project: {
-                                review: 1,
+                                // review: 1,
                                 rating: 1,
-                                addedBy: 1,
-                                createdAt: 1,
+                                // addedBy: 1,
+                                // createdAt: 1,
                             },
                         },
                     ],

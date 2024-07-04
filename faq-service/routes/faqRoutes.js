@@ -12,8 +12,8 @@ const {removeFaqQuestion,removeFaq} = require('../controller/removeFaqs');
 
 
 router.post('/createFaq',jwtValidation,createFaq);
-router.post('/getAllFaqs',jwtValidation,getAllFaqs);
-router.post('/getSingleFaq',jwtValidation,getSingleFaq);
+router.post('/getAllFaqs',/*jwtValidation,*/getAllFaqs);
+router.post('/getSingleFaq',/*jwtValidation,*/getSingleFaq);
 
 
 router.post('/updateFaqQuestion',jwtValidation,updateFaqQuestion);

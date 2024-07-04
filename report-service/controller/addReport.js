@@ -8,7 +8,7 @@ const { createApplicationLog } = require("model-hook/common_function/createLog")
 
 exports.addReportOnProductReview = async(req,res)=>{
     try {
-        const {productRatingReviewId,reason,addedBy,productId,blogCommentId} = req.body;
+        const {productRatingReviewId,reason,addedBy} = req.body;
 
         const { loginUser } = req;
         if (loginUser._id != addedBy) {
@@ -37,9 +37,9 @@ exports.addReportOnProductReview = async(req,res)=>{
             return res.status(409).send({status:0,message:"All fields are required"})
         }
 
-        if(productRatingReviewId && (productId || blogCommentId) ){
-            return res.status(400).send({status:0,message:"Only productRatingReviewId required",data:[]})
-        }
+        // if(productRatingReviewId && (productId || blogCommentId) ){
+        //     return res.status(400).send({status:0,message:"Only productRatingReviewId required",data:[]})
+        // }
 
         if(!['Inappropriate', 'Off topic', 'Fake', 'Other'].includes(reason)){
             return res.status(400).send({status:0,message:"Invalid reason",data:[]})
@@ -81,7 +81,7 @@ exports.addReportOnProductReview = async(req,res)=>{
 
 exports.addReportOnBlogComment = async(req,res)=>{
     try {
-        const {productRatingReviewId,reason,addedBy,productId,blogCommentId} = req.body;
+        const {reason,addedBy,blogCommentId} = req.body;
 
         const { loginUser } = req;
         if (loginUser._id != addedBy) {
@@ -110,9 +110,9 @@ exports.addReportOnBlogComment = async(req,res)=>{
             return res.status(409).send({status:0,message:"All fields are required"})
         }
 
-        if(blogCommentId && (productId || productRatingReviewId) ){
-            return res.status(400).send({status:0,message:"Only blogCommentId required",data:[]})
-        }
+        // if(blogCommentId && (productId || productRatingReviewId) ){
+        //     return res.status(400).send({status:0,message:"Only blogCommentId required",data:[]})
+        // }
 
         if(!['Inappropriate', 'Off topic', 'Fake', 'Other'].includes(reason)){
             return res.status(400).send({status:0,message:"Invalid reason",data:[]})
@@ -154,7 +154,7 @@ exports.addReportOnBlogComment = async(req,res)=>{
 
 exports.addReportOnProduct = async(req,res)=>{
     try {
-        const {productRatingReviewId,reason,addedBy,productId,blogCommentId} = req.body;
+        const {reason,addedBy,productId} = req.body;
 
         const { loginUser } = req;
         if (loginUser._id != addedBy) {
@@ -183,9 +183,9 @@ exports.addReportOnProduct = async(req,res)=>{
             return res.status(409).send({status:0,message:"All fields are required"})
         }
 
-        if(productId && (blogCommentId || productRatingReviewId) ){
-            return res.status(400).send({status:0,message:"Only productId required",data:[]})
-        }
+        // if(productId && (blogCommentId || productRatingReviewId) ){
+        //     return res.status(400).send({status:0,message:"Only productId required",data:[]})
+        // }
 
         if(!['Inappropriate', 'Off topic', 'Fake', 'Other'].includes(reason)){
             return res.status(400).send({status:0,message:"Invalid reason",data:[]})

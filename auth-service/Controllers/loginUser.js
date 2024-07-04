@@ -71,7 +71,6 @@ exports.generateOtp = () => {
     return otp;
 }
 
-
 exports.loginVendor = async (req, res, next) => {
     try {
         const { email, password } = req.body;

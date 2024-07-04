@@ -174,8 +174,6 @@ exports.verifyOtp = async (req, res, next) => {
     }
 }
 
-
-
 exports.enableVendor2FA = async (req, res, next) => {
     try {
         const { vendorId } = req.body
@@ -207,7 +205,6 @@ exports.enableVendor2FA = async (req, res, next) => {
         return res.status(500).send({ status: 0, message: "Something went wrong", error });
     }
 }
-
 
 exports.sendVendorOtp = async (req, res, next) => {
     try {

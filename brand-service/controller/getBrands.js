@@ -16,6 +16,7 @@ exports.getOneBrand = async (req, res) => {
         if (!(loginUser?.role === "Admin" )) {
             return res.status(403).send({ status: 0, message: "Unauthorized access."});
         }
+        
         if (!(brandId && addedBy)) {
             return res.status(403).send({
                 status: 0,

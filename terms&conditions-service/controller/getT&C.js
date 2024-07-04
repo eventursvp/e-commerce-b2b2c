@@ -5,12 +5,12 @@ const { createApplicationLog } = require("model-hook/common_function/createLog")
 
 exports.getTermsAndCondition = async(req,res)=>{
     try {
-        const{addedBy,termsAndConditionId} = req.body;
+        const{termsAndConditionId} = req.body;
 
-        const { loginUser } = req;
-        if (loginUser._id != addedBy) {
-            return res.status(401).send({ message: "Unauthorized access."});
-        }
+        // const { loginUser } = req;
+        // if (loginUser._id != addedBy) {
+        //     return res.status(401).send({ message: "Unauthorized access."});
+        // }
 
         if(!(mongoose.Types.ObjectId.isValid(addedBy) && mongoose.Types.ObjectId.isValid(termsAndConditionId))){
             return res.status(400).send({status:0, message: 'Invalid product IDs',data:[] });
@@ -45,12 +45,12 @@ exports.getTermsAndCondition = async(req,res)=>{
 
 exports.getProductTermsAndCondition = async(req,res)=>{
     try {
-        const{addedBy,termsAndConditionId,productId} = req.body;
+        const{termsAndConditionId,productId} = req.body;
 
-        const { loginUser } = req;
-        if (loginUser._id != addedBy) {
-            return res.status(401).send({ message: "Unauthorized access."});
-        }
+        // const { loginUser } = req;
+        // if (loginUser._id != addedBy) {
+        //     return res.status(401).send({ message: "Unauthorized access."});
+        // }
 
         if(!(mongoose.Types.ObjectId.isValid(addedBy) && mongoose.Types.ObjectId.isValid(termsAndConditionId) && mongoose.Types.ObjectId.isValid(productId))){
             return res.status(400).send({status:0, message: 'Invalid product IDs',data:[] });

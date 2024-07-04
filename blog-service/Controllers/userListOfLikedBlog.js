@@ -5,7 +5,7 @@ const BlogLikes = require("model-hook/Model/blogLikesModel")
 exports.userListOfLikedBlog = async (req, res, next) => {
     try {
         const { userId, blogId } = req.body
-        const { loginUser } = req
+        // const { loginUser } = req
 
         if (!userId) {
             return res.status(400).send({ status: 0, message: "User Id is required." })
@@ -13,9 +13,9 @@ exports.userListOfLikedBlog = async (req, res, next) => {
         if (!mongoose.isValidObjectId(userId)) {
             return res.status(400).send({ status: 0, message: "Invalid user id." });
         }
-        if (loginUser?._id != userId || loginUser?.role !== "Admin") {
-            return res.status(403).send({ status: 0, message: "Unauthorized access." })
-        }
+        // if (loginUser?._id != userId || loginUser?.role !== "Admin") {
+        //     return res.status(403).send({ status: 0, message: "Unauthorized access." })
+        // }
 
         if (!blogId) {
             return res.status(400).send({ status: 0, message: "Blog id is required." })

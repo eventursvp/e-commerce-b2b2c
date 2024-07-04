@@ -8,8 +8,6 @@ const {getOneInvoice,getAllInvoice} = require('../controller/getInvoice');
 
 router.post('/getOneInvoice',jwtValidation,getOneInvoice);
 router.post('/getAllInvoice',jwtValidation,getAllInvoice);
-// router.post('/getAllOrders',jwtValidation,getAllOrders);
-// router.post('/getVendorOrders',jwtValidation,getVendorOrders);
 
 
 

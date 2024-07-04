@@ -2,18 +2,15 @@ const Offer = require('model-hook/Model/offerModel');
 const User = require('model-hook/Model/userModel');
 const Product = require('model-hook/Model/productModel');
 const { createApplicationLog } = require("model-hook/common_function/createLog");
-
 const mongoose = require('mongoose');
 
 
 exports.getOffer = async(req,res)=>{
     try {
-
-        
         const {offerId,addedBy} = req.body;
         
         const { loginUser } = req;
-        if (loginUser._id != addedBy) {
+        if (loginUser._id != addedBy || loginUser.role != "Admin") {
             return res.status(401).send({ message: "Unauthorized access."});
         }
         
@@ -52,16 +49,16 @@ exports.getOffer = async(req,res)=>{
 
 exports.getAllOffers = async(req,res)=>{
     try {
-        const {addedBy} = req.body
+        // const {addedBy} = req.body
 
-        const { loginUser } = req;
-        if (loginUser._id != addedBy) {
-            return res.status(401).send({ message: "Unauthorized access."});
-        }
+        // const { loginUser } = req;
+        // if (loginUser._id != addedBy) {
+        //     return res.status(401).send({ message: "Unauthorized access."});
+        // }
 
-        if(!addedBy){
-            return res.status(403).send({status:0,message:"Invalid request",data:[]})
-        }
+        // if(!addedBy){
+        //     return res.status(403).send({status:0,message:"Invalid request",data:[]})
+        // }
 
         let currentDate = new Date();
         currentDate.setUTCHours(0,0,0,0)

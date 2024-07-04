@@ -43,16 +43,15 @@ exports.removeProduct = async (req, res) => {
             { new: true }
         );
         if (resp) {
+            await createApplicationLog("Product", "remove product", {}, {}, addedBy);
             return res.status(200).send({
                 status: 1,
                 messae: "Record deleted successfully!",
             });
         }
 
-        await createApplicationLog("Product", "remove product", {}, {}, addedBy);
-
         return res.status(403).send({
-            status: 1,
+            status: 0,
             messae: "Error in  deleting record",
             data: [],
         });
@@ -101,13 +100,13 @@ exports.removeProductFromRecentView = async (req, res) => {
             { new: true }
         );
         if (resp) {
+            await createApplicationLog("Product", "remove recent viewed product", {}, {}, addedBy);
             return res.status(200).send({
                 status: 1,
                 messae: "Record deleted successfully!",
             });
         }
 
-        await createApplicationLog("Product", "remove recent viewed product", {}, {}, addedBy);
 
         return res.status(403).send({
             status: 1,

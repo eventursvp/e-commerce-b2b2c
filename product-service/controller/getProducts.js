@@ -58,7 +58,7 @@ exports.getOneProduct = async (req, res) => {
         }
 
 
-        await createApplicationLog("Product", "get one product", {}, {}, addedBy);
+        // await createApplicationLog("Product", "get one product", {}, {}, addedBy);
 
         return res.status(200).send({
             status: 1,
@@ -74,6 +74,7 @@ exports.getOneProduct = async (req, res) => {
         });
     }
 };
+
 
 exports.getAllProducts = async (req, res) => {
     try {
@@ -101,10 +102,10 @@ exports.getAllProducts = async (req, res) => {
             });
         }
 
-        const { loginUser } = req;
-        if (loginUser._id != userId) {
-            return res.status(401).send({ message: "Unauthorized access."});
-        }
+        // const { loginUser } = req;
+        // if (loginUser._id != userId) {
+        //     return res.status(401).send({ message: "Unauthorized access."});
+        // }
         if (!userId) {
             return res
                 .status(403)
@@ -425,12 +426,12 @@ exports.getAllProducts = async (req, res) => {
 
 exports.compareProduct = async (req, res) => {
     try {
-        const { productIds, addedBy } = req.body;
+        const { productIds, /*addedBy*/ } = req.body;
 
-        const { loginUser } = req;
-        if (loginUser._id != addedBy) {
-            return res.status(401).send({ message: "Unauthorized access."});
-        }
+        // const { loginUser } = req;
+        // if (loginUser._id != addedBy) {
+        //     return res.status(401).send({ message: "Unauthorized access."});
+        // }
 
         if (
             !Array.isArray(productIds) ||
@@ -471,16 +472,16 @@ exports.compareProduct = async (req, res) => {
 
 exports.getSimilarProducts = async (req, res) => {
     try {
-        const { productId, addedBy } = req.body;
+        const { productId, /*addedBy*/ } = req.body;
 
-        const { loginUser } = req;
-        if (loginUser._id != addedBy) {
-            return res.status(401).send({ message: "Unauthorized access."});
-        }
+        // const { loginUser } = req;
+        // if (loginUser._id != addedBy) {
+        //     return res.status(401).send({ message: "Unauthorized access."});
+        // }
 
         if (
-            !mongoose.Types.ObjectId.isValid(productId) &&
-            !mongoose.Types.ObjectId.isValid(addedBy)
+            !mongoose.Types.ObjectId.isValid(productId) 
+            // !mongoose.Types.ObjectId.isValid(addedBy)
         ) {
             return res
                 .status(400)

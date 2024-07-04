@@ -1,6 +1,5 @@
 const Cart = require("model-hook/Model/cartModel");
 const User = require("model-hook/Model/userModel");
-const Vendor = require("model-hook/Model/vendorModel");
 const Product = require("model-hook/Model/productModel");
 const { createApplicationLog } = require("model-hook/common_function/createLog");
 
@@ -72,23 +71,6 @@ exports.addToCart = async (req, res) => {
             return res.status(404).send({
                 status: 0,
                 message: "Record not found",
-                data: [],
-            });
-        }
-
-        const vendorData = await Vendor.findOne({
-            _id:productData.addedBy,
-            isBlocked:false,
-            isReject:false,
-            isDeleted:false,
-            phoneVerified:true,
-            emailVerified:true
-        });
-
-        if (!vendorData) {
-            return res.status(404).send({
-                status: 0,
-                message: "Vendor not found",
                 data: [],
             });
         }

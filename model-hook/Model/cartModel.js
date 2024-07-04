@@ -9,7 +9,6 @@ const Cart = new Schema({
     quantity: { type: Number, default: 1 },
     isDeleted:{type:Boolean,default:false},
     variantId: { type: Schema.ObjectId, ref: 'Product' },
-    vendorId: { type: Schema.ObjectId, ref: 'Vendor' },
 
 
     

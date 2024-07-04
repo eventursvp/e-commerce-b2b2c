@@ -6,23 +6,23 @@ const { createApplicationLog } = require("model-hook/common_function/createLog")
 
 exports.getAllFaqs = async(req,res)=>{
     try {
-        const{addedBy} = req.body
+        // const{addedBy} = req.body
 
-        const { loginUser } = req;
-        if (loginUser._id != addedBy) {
-            return res.status(401).send({ message: "Unauthorized access."});
-        }
+        // const { loginUser } = req;
+        // if (loginUser._id != addedBy) {
+        //     return res.status(401).send({ message: "Unauthorized access."});
+        // }
 
 
-        if(!addedBy){
-            return res.status(409).send({status:0,message:"All fields are required"})
-        }
-        if (
-            !
-                mongoose.Types.ObjectId.isValid(addedBy)
-        ) {
-            return res.status(403).send({ status: 0, message: "Invalid request" });
-        }
+        // if(!addedBy){
+        //     return res.status(409).send({status:0,message:"All fields are required"})
+        // }
+        // if (
+        //     !
+        //         mongoose.Types.ObjectId.isValid(addedBy)
+        // ) {
+        //     return res.status(403).send({ status: 0, message: "Invalid request" });
+        // }
 
         const data = await Faq.find({
             isDeleted: false,
@@ -56,32 +56,32 @@ exports.getAllFaqs = async(req,res)=>{
 
 exports.getSingleFaq = async(req,res) => {
     try {
-        const{addedBy,faqId} = req.body
+        const{/*addedBy,*/faqId} = req.body
 
-        const { loginUser } = req;
-        if (loginUser._id != addedBy) {
-            return res.status(401).send({ message: "Unauthorized access."});
-        }
+        // const { loginUser } = req;
+        // if (loginUser._id != addedBy) {
+        //     return res.status(401).send({ message: "Unauthorized access."});
+        // }
 
-        if (!(loginUser?.role === "Admin" )) {
-            return res.status(403).send({ status: 0, message: "Unauthorized access."});
-        }
+        // if (!(loginUser?.role === "Admin" )) {
+        //     return res.status(403).send({ status: 0, message: "Unauthorized access."});
+        // }
 
-      if(!(addedBy && faqId)){
+      if(!(faqId)){
         return res.status(409).send({status:0,message:"All fields are required"})
     }
 
-      if (
-          !
-              mongoose.Types.ObjectId.isValid(addedBy)
-      ) {
-          return res.status(403).send({ status: 0, message: "Invalid request" });
-      }
+    //   if (
+    //       !
+    //           mongoose.Types.ObjectId.isValid(addedBy)
+    //   ) {
+    //       return res.status(403).send({ status: 0, message: "Invalid request" });
+    //   }
 
       const data = await Faq.findOne({
         _id:faqId,
           isDeleted: false,
-          addedBy:addedBy
+        //   addedBy:addedBy
       });
 
       if (!data) {

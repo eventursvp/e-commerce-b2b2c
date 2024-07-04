@@ -3,14 +3,22 @@ const mongoose = require("mongoose");
 
 exports.getOneInvoice = async (req, res) => {
     try {
-        const { addedBy, invoiceId } = req.body;
+        const { addedBy, invoiceId,userId } = req.body;
 
         const { loginUser } = req;
-        if (loginUser._id != addedBy) {
+        if (!(loginUser._id != addedBy || loginUser._id != userId)) {
             return res.status(401).send({ message: "Unauthorized access." });
         }
 
-        if (!(loginUser?.role === "Admin" || loginUser?.role === "Vendor")) {
+        if(addedBy && userId){
+            return res.status(401).send({ message: "Add only one id." });
+        }
+
+        if(!(addedBy || userId)){
+            return res.status(401).send({ message: "Add only one id." });
+        }
+
+        if (!(loginUser?.role === "Admin" || loginUser?.role === "Vendor" || loginUser?.role === "User")) {
             return res
                 .status(403)
                 .send({ status: 0, message: "Unauthorized access." });
@@ -18,7 +26,8 @@ exports.getOneInvoice = async (req, res) => {
 
         if (
             !(
-                mongoose.Types.ObjectId.isValid(addedBy) &&
+                mongoose.Types.ObjectId.isValid(addedBy) ||
+                mongoose.Types.ObjectId.isValid(userId) &&
                 mongoose.Types.ObjectId.isValid(invoiceId)
             )
         ) {
@@ -32,7 +41,14 @@ exports.getOneInvoice = async (req, res) => {
         const aggregate = [
             {
                 $match: {
-                    addedBy: new mongoose.Types.ObjectId(addedBy),
+                    $or:[
+                        {
+                            addedBy: new mongoose.Types.ObjectId(addedBy),
+                        },
+                        {
+                            userId: new mongoose.Types.ObjectId(userId),
+                        }
+                    ],
                     _id: new mongoose.Types.ObjectId(invoiceId),
                 },
             },
@@ -142,12 +158,13 @@ exports.getOneInvoice = async (req, res) => {
             {
                 $lookup: {
                     from: "Orders",
-                    let: { orderId: "$orderId" },
+                    let: { orderId: "$orderId",userId:"$userId" },
                     pipeline: [
                         {
                             $match: {
                                 $expr: {
-                                    $and: [{ $eq: ["$_id", "$$orderId"] }],
+                                    $and: [{ $eq: ["$_id", "$$orderId"] },
+                                    { $eq: ["$addedBy", "$$userId"] }],
                                 },
                             },
                         },

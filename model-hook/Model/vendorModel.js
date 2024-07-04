@@ -55,7 +55,6 @@ const Vendor = new Schema({
     is2FAEnabled: { type: Boolean, default: false },
     phoneVerified: { type: Boolean, default: false },
 
-
 }, {
     timestamps: true
 });
